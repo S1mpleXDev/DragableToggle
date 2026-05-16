@@ -9,10 +9,6 @@
             <string>UnityFramework</string>
             <string>Runner</string>
         </array>
-        <key>Bundles</key>
-        <array>
-            <string>com.apple.UIKit</string>
-        </array>
     </dict>
 </dict>
 </plist>
