@@ -1,0 +1,37 @@
+name: Build DragableToggle
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential clang git curl
+
+    - name: Install Theos
+      run: |
+        bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
+
+    - name: Build
+      run: |
+        export THEOS=$HOME/theos
+        make clean
+        make package THEOS=$HOME/theos
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: DragableToggle
+        path: |
+          packages/*.deb
+          obj/debug/arm64/*.dylib
