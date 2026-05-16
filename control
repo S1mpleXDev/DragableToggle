@@ -1,8 +1,8 @@
-Package: com.yourname.dragabletoggle
+Package: com.s1mplex.dragabletoggle
 Name: DragableToggle
-Version: 1.0.0
+Version: 1.0
 Architecture: iphoneos-arm
-Description: Clean draggable toggle button
-Maintainer: You
-Author: You
+Description: Draggable toggle with settings panel
+Maintainer: S1mpleXDev
+Author: S1mpleXDev
 Section: Tweaks
