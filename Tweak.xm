@@ -1,68 +1,49 @@
 #import <UIKit/UIKit.h>
 
-@interface DragableToggle : UIView
-@property (nonatomic, strong) UILabel *label;
-@property (nonatomic, assign) BOOL isOn;
+@interface DragableToggleView : UIView
+@property (nonatomic, strong) UIButton *toggleButton;
+@property (nonatomic, strong) UIView *panel;
 @end
 
-@implementation DragableToggle
+@implementation DragableToggleView
 
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = [UIColor colorWithRed:0.2 green:0.6 blue:1.0 alpha:1.0];
-        self.layer.cornerRadius = 20;           // Smooth rounded corners like iOS apps
-        self.layer.masksToBounds = YES;
-        self.layer.shadowColor = [UIColor blackColor].CGColor;
-        self.layer.shadowOffset = CGSizeMake(0, 4);
-        self.layer.shadowOpacity = 0.3;
-        self.layer.shadowRadius = 8;
-
-        self.label = [[UILabel alloc] initWithFrame:self.bounds];
-        self.label.text = @"OFF";
-        self.label.textColor = [UIColor whiteColor];
-        self.label.font = [UIFont boldSystemFontOfSize:16];
-        self.label.textAlignment = NSTextAlignmentCenter;
-        [self addSubview:self.label];
-
-        self.isOn = NO;
-
-        // Drag gesture
+        self.toggleButton = [UIButton buttonWithType:UIButtonTypeSystem];
+        self.toggleButton.frame = CGRectMake(0, 0, 60, 60);
+        self.toggleButton.backgroundColor = [UIColor systemBlueColor];
+        self.toggleButton.layer.cornerRadius = 18;
+        [self.toggleButton setTitle:@"▶" forState:UIControlStateNormal];
+        [self.toggleButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        self.toggleButton.titleLabel.font = [UIFont systemFontOfSize:28 weight:UIFontWeightBold];
+        
         UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
-        [self addGestureRecognizer:pan];
-
-        // Tap to toggle
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(toggleState)];
-        [self addGestureRecognizer:tap];
+        [self.toggleButton addGestureRecognizer:pan];
+        
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(togglePanel)];
+        [self.toggleButton addGestureRecognizer:tap];
+        
+        [self addSubview:self.toggleButton];
+        
+        // Create panel
+        self.panel = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 280, 200)];
+        self.panel.backgroundColor = [UIColor colorWithWhite:0.1 alpha:0.95];
+        self.panel.layer.cornerRadius = 20;
+        self.panel.hidden = YES;
+        [self addSubview:self.panel];
     }
     return self;
 }
 
 - (void)handlePan:(UIPanGestureRecognizer *)gesture {
     CGPoint translation = [gesture translationInView:self.superview];
-    self.center = CGPointMake(self.center.x + translation.x, self.center.y + translation.y);
+    gesture.view.center = CGPointMake(gesture.view.center.x + translation.x, gesture.view.center.y + translation.y);
     [gesture setTranslation:CGPointZero inView:self.superview];
 }
 
-- (void)toggleState {
-    self.isOn = !self.isOn;
-    
-    if (self.isOn) {
-        self.backgroundColor = [UIColor colorWithRed:0.2 green:0.8 blue:0.4 alpha:1.0];
-        self.label.text = @"ON";
-    } else {
-        self.backgroundColor = [UIColor colorWithRed:0.2 green:0.6 blue:1.0 alpha:1.0];
-        self.label.text = @"OFF";
-    }
-    
-    // Simple scale animation
-    [UIView animateWithDuration:0.1 animations:^{
-        self.transform = CGAffineTransformMakeScale(0.9, 0.9);
-    } completion:^(BOOL finished) {
-        [UIView animateWithDuration:0.1 animations:^{
-            self.transform = CGAffineTransformIdentity;
-        }];
-    }];
+- (void)togglePanel {
+    self.panel.hidden = !self.panel.hidden;
 }
 
 @end
@@ -71,12 +52,13 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     BOOL result = %orig;
-
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        DragableToggle *toggle = [[DragableToggle alloc] initWithFrame:CGRectMake(50, 100, 80, 80)];
-        [[UIApplication sharedApplication].keyWindow addSubview:toggle];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        DragableToggleView *toggle = [[DragableToggleView alloc] initWithFrame:CGRectMake(50, 200, 60, 60)];
+        UIWindow *window = [[UIApplication sharedApplication] keyWindow];
+        [window addSubview:toggle];
     });
-
+    
     return result;
 }
 
