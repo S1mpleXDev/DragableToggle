@@ -1,8 +1,0 @@
-Package: com.s1mplex.dragabletoggle
-Name: DragableToggle
-Version: 1.0
-Architecture: iphoneos-arm
-Description: Draggable toggle with settings panel
-Maintainer: S1mpleXDev
-Author: S1mpleXDev
-Section: Tweaks
